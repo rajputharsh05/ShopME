@@ -5,6 +5,6 @@ const { NormalToHasedPassWordConverter, PassWordVerification } = require("../mid
 const Router = express.Router();
 
 Router.post("/signup",NormalToHasedPassWordConverter,UserSignUp);
-Router.post("/login",PassWordVerification,UserLogin);
+Router.get("/login",PassWordVerification,UserLogin);
 
 module.exports = Router;

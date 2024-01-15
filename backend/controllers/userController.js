@@ -1,45 +1,41 @@
-const  UsserModel  = require("../models/UserModel")
+const UserModel = require("../models/UserModel")
 
+const UserLogin = async (req, res) => {
 
-const UserLogin = async (req,res) => {
-    const {username} = req.body;
-    const UserInformationFromDatabase = await UsserModel.findOne({username})
-    
-    res.end("User Verified");
-    res.redirect("/dashboard")
+    const { username } = req.query;
+
+    try {        
+        const UserInformationFromDatabase = await UserModel.findOne({ username });
+        if (UserInformationFromDatabase.isAdmin) {
+            res.redirect("http://localhost:4000/dashboard/admin");
+        } else {
+            res.redirect("http://localhost:4000/dashboard");
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({"internal server error":"401"});
+    }
+
 }
 
+const UserSignUp = (req, res) => {
 
-const UserSignUp = (req,res)=>{
+    const { fname , lname , username , email , SecurePassWord , isAdmin} = req.body
 
-    const { fname }= req.body
-    const lname = req.body.lname
-    const username = req.body.username
-    const email = req.body.email
-    const SecurePassWord = req.body.SecurePassWord
-    const IsAdmin = req.body.IsAdmin
-    
-    try{   
-        const NewUser = new UsserModel({
-            firstname : fname,
-            lastname : lname,
-            email : email,
-            username : username,
-            password : SecurePassWord,
-            IsAdmin : IsAdmin
-        });
+    try {
+
+        const NewUser = new UserModel({ firstname: fname , lastname: lname , email: email , username: username , password: SecurePassWord , isAdmin: isAdmin});
 
         NewUser.save();
 
-    }catch(err){
+    } catch (err) {
 
         console.log(err);
 
     }
-    
-    res.json({"status" : "ok","Server":"Harsh's"})
-}
 
+    res.json({ "status": "ok", "Server": "Harsh's" })
+}
 
 
 module.exports = {
